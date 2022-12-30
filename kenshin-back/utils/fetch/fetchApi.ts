@@ -40,12 +40,14 @@ const getMyGenshinData = async (cookies: string) => {
         `https://bbs-api-os.mihoyo.com/game_record/card/wapi/getGameRecordCard?uid=${uid}`,
       )
       .then((res) => res.data);
+    if (data.message !== 'OK') throw new Error('Not Cookie');
     return {
       game_role_id: data.data.list[0].game_role_id,
       region: data.data.list[0].region,
     };
   } catch {
-    return;
+    console.log('Error');
+    return new Error('Not a Cookie');
   }
 };
 
