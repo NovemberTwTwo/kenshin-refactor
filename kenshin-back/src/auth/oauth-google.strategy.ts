@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile } from 'passport';
 import { Strategy } from 'passport-jwt';
+import { GoogleAuthCredentialsDto } from './dto/google-auth-credential.dto';
 
 // interface GoogleStrategyType {
 //   authorizationURL?: string;
@@ -25,7 +26,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: Profile) {
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: Profile,
+  ): Promise<GoogleAuthCredentialsDto> {
     const { id, name, emails } = profile;
     return {
       provider: 'google',

@@ -1,7 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ValidationPipe } from '@nestjs/common/pipes';
 import { AuthService } from './auth.service';
-import { AuthCredentialsDto } from './dto/auth-credential.dto';
+import { LocalAuthCredentialsDto } from './dto/local-auth-credential.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -9,15 +9,20 @@ export class AuthController {
 
   @Post('/signup')
   signUp(
-    @Body(ValidationPipe) authCredentialDto: AuthCredentialsDto,
+    @Body(ValidationPipe) localAuthCredentialsDto: LocalAuthCredentialsDto,
   ): Promise<void> {
-    return this.authService.signUp(authCredentialDto);
+    return this.authService.localSignUp(localAuthCredentialsDto);
   }
 
   @Post('/signin')
   signIn(
-    @Body(ValidationPipe) authCredentialDto: AuthCredentialsDto,
+    @Body(ValidationPipe) localAuthCredentialsDto: LocalAuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
-    return this.authService.signIn(authCredentialDto);
+    return this.authService.localSignIn(localAuthCredentialsDto);
+  }
+
+  @Get()
+  test() {
+    console.log(process.env.JWT_SECRET);
   }
 }

@@ -1,10 +1,13 @@
 import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
-export class AuthCredentialsDto {
+export class LocalAuthCredentialsDto {
   @IsString()
-  @MinLength(4)
-  @MaxLength(20)
-  username: string;
+  @MinLength(10)
+  @Matches(
+    /^[a-zA-Z0-9\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+    { message: 'Not matches email form' },
+  )
+  email: string;
 
   @IsString()
   @MinLength(8)
@@ -13,13 +16,4 @@ export class AuthCredentialsDto {
     message: 'password only accepts english and number, specials',
   })
   password: string;
-
-  @IsString()
-  providerId?: string;
-
-  @IsString()
-  provider?: string;
-
-  @IsString()
-  email?: string;
 }

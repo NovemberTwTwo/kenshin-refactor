@@ -8,14 +8,14 @@ import { UserRepository } from './user.repository';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private userRepository: UserRepository) {
     super({
-      secretOrKey: process.env.JWT_SECRET,
+      secretOrKey: `${process.env.JWT_SECRET}`,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
 
-  async validate(payload: { username: any }) {
-    const { username } = payload;
-    const user: User = await this.userRepository.findOneBy({ username });
+  async validate(payload: { email: string }) {
+    const { email } = payload;
+    const user: User = await this.userRepository.findOneBy({ email });
 
     if (!user) {
       throw new UnauthorizedException();

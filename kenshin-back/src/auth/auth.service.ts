@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuthCredentialsDto } from './dto/auth-credential.dto';
+import { LocalAuthCredentialsDto } from './dto/local-auth-credential.dto';
 import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcryptjs';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
@@ -12,19 +12,24 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp(authCredentialDto: AuthCredentialsDto): Promise<void> {
-    return this.userRepository.createUser(authCredentialDto);
+  async localSignUp(
+    localAuthCredentialsDto: LocalAuthCredentialsDto,
+  ): Promise<void> {
+    return this.userRepository.createLocalUser(localAuthCredentialsDto);
   }
 
-  async signIn(
-    authCredentialDto: AuthCredentialsDto,
+  async localSignIn(
+    localAuthCredentialsDto: LocalAuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
-    const { username, password } = authCredentialDto;
-    const user = await this.userRepository.findOneBy({ username });
+    const { email, password } = localAuthCredentialsDto;
+    const user = await this.userRepository.findOne({
+      relations: ['localUser'],
+      where: { email },
+    });
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { username };
-      const accessToken = await this.jwtService.sign(payload);
+    if (user && (await bcrypt.compare(password, user.localUser.password))) {
+      const payload = { email };
+      const accessToken = this.jwtService.sign(payload);
       return { accessToken };
     } else {
       throw new UnauthorizedException('login failed');
