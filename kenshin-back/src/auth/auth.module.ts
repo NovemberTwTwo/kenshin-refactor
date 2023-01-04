@@ -7,6 +7,7 @@ import { TypeOrmExModule } from 'src/typeorm-ex.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
+import { GoogleStrategy } from './oauth-google.strategy';
 import { UserRepository } from './user.repository';
 
 @Module({
@@ -31,7 +32,7 @@ import { UserRepository } from './user.repository';
     TypeOrmExModule.forCustomRepository([UserRepository]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy],
   exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}

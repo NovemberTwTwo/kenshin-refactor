@@ -8,6 +8,8 @@ import { LocalAuthCredentialsDto } from './dto/local-auth-credential.dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
 import { LocalUser } from './local-user.entity';
+import { GoogleAuthCredentialsDto } from './dto/google-auth-credential.dto';
+import { SocialUser } from './social-user.entity';
 
 @CustomRepository(User)
 export class UserRepository extends Repository<User> {
@@ -27,10 +29,38 @@ export class UserRepository extends Repository<User> {
     user.localUser = localUser;
 
     try {
+      await localUser.save();
       await this.save(user);
     } catch (error) {
       if (error.code === '23505') {
-        throw new ConflictException('Existing username');
+        throw new ConflictException('Existing email');
+      } else {
+        console.log(error);
+        throw new InternalServerErrorException();
+      }
+    }
+  }
+
+  async createSocialUser(
+    socialAuthCredentialsDto: GoogleAuthCredentialsDto,
+  ): Promise<void> {
+    const { email, providerId, provider } = socialAuthCredentialsDto;
+
+    const user = this.create({ email: email });
+
+    const socialUser = new SocialUser();
+    socialUser.email = email;
+    socialUser.provider = provider;
+    socialUser.providerId = providerId;
+
+    user.socialUser = socialUser;
+
+    try {
+      await socialUser.save();
+      await this.save(user);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('Existing email');
       } else {
         console.log(error);
         throw new InternalServerErrorException();

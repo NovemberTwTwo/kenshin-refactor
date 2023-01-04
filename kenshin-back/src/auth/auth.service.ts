@@ -4,6 +4,7 @@ import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcryptjs';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt/dist';
+import { GoogleAuthCredentialsDto } from './dto/google-auth-credential.dto';
 
 @Injectable()
 export class AuthService {
@@ -34,5 +35,22 @@ export class AuthService {
     } else {
       throw new UnauthorizedException('login failed');
     }
+  }
+
+  async googleSignUpOrIn(
+    socialAuthCredentialsDto: GoogleAuthCredentialsDto,
+  ): Promise<{ accessToken: string }> {
+    const { email } = socialAuthCredentialsDto;
+    const user = await this.userRepository.findOne({
+      relations: ['socialUser'],
+      where: { email },
+    });
+
+    if (user) {
+      const payload = { email };
+      const accessToken = this.jwtService.sign(payload);
+      console.log(accessToken);
+      return { accessToken };
+    } else this.userRepository.createSocialUser(socialAuthCredentialsDto);
   }
 }

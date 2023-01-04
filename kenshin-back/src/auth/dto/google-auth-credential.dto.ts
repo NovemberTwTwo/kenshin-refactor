@@ -2,9 +2,6 @@ import { IsString } from 'class-validator';
 
 export class GoogleAuthCredentialsDto {
   @IsString()
-  name: string;
-
-  @IsString()
   email: string;
 
   @IsString()
@@ -12,4 +9,10 @@ export class GoogleAuthCredentialsDto {
 
   @IsString()
   provider: string;
+
+  @IsString()
+  accessToken: string;
+
+  @IsString()
+  refreshToken: string;
 }
