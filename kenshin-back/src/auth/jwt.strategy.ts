@@ -8,12 +8,12 @@ import { UserRepository } from './user.repository';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private userRepository: UserRepository) {
     super({
-      secretOrKey: 'Secret1234',
+      secretOrKey: process.env.JWT_SECRET,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
 
-  async validate(payload) {
+  async validate(payload: { username: any }) {
     const { username } = payload;
     const user: User = await this.userRepository.findOneBy({ username });
 

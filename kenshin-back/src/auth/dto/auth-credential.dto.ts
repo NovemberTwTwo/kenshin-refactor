@@ -13,4 +13,13 @@ export class AuthCredentialsDto {
     message: 'password only accepts english and number, specials',
   })
   password: string;
+
+  @IsString()
+  providerId?: string;
+
+  @IsString()
+  provider?: string;
+
+  @IsString()
+  email?: string;
 }
